@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import axios from "axios";
+import Dropdown from "./components/Dropdown";
 
 class App extends React.Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <header>Star Wars</header>
+        <Dropdown movies={this.state.movies} />
       </div>
     );
   }
