@@ -19,7 +19,10 @@ class App extends React.Component {
     axios
       .get("https://swapi.co/api/films")
       .then(res => {
-        this.setState({ movies: res.data.results, isLoading: false });
+        const sortedMovies = res.data.results.sort((a, b) => {
+          return new Date(a.release_date) - new Date(b.release_date);
+        });
+        this.setState({ movies: sortedMovies, isLoading: false });
       })
       .catch(err => {
         this.setState({ error: true });
