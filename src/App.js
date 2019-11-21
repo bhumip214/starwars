@@ -9,13 +9,13 @@ class App extends React.Component {
     this.state = {
       movies: [],
       isLoading: false,
-      error: false
+      error: false,
+      selectedMovie: null
     };
   }
 
   componentDidMount() {
     this.setState({ isLoading: true });
-
     axios
       .get("https://swapi.co/api/films")
       .then(res => {
@@ -29,12 +29,36 @@ class App extends React.Component {
       });
   }
 
+  handleSelectMovie = e => {
+    console.log(e.target.value);
+
+    if (e.target.value === "null") {
+      this.setState({ selectedMovie: null });
+    } else {
+      const movie = this.state.movies.find(movie => {
+        return movie.title === e.target.value;
+      });
+      this.setState({ selectedMovie: movie });
+    }
+  };
+
   render() {
-    console.log(this.state.movies);
     return (
       <div className="App">
-        <header>Star Wars</header>
-        <Dropdown movies={this.state.movies} />
+        <Dropdown
+          movies={this.state.movies}
+          onChange={this.handleSelectMovie}
+        />
+
+        {this.state.selectedMovie === null ? (
+          <img
+            width="600px"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Star_Wars_Logo.svg/694px-Star_Wars_Logo.svg.png"
+            alt="star-wars-logo"
+          />
+        ) : (
+          <div className="movie">{this.state.selectedMovie.title}</div>
+        )}
       </div>
     );
   }
