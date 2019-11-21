@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import axios from "axios";
 import Dropdown from "./components/Dropdown";
+import OpeningCrawl from "./components/OpeningCrawl";
 
 class App extends React.Component {
   constructor(props) {
@@ -30,8 +31,6 @@ class App extends React.Component {
   }
 
   handleSelectMovie = e => {
-    console.log(e.target.value);
-
     if (e.target.value === "null") {
       this.setState({ selectedMovie: null });
     } else {
@@ -57,7 +56,9 @@ class App extends React.Component {
             alt="star-wars-logo"
           />
         ) : (
-          <div className="movie">{this.state.selectedMovie.title}</div>
+          <div className="movie">
+            <OpeningCrawl selectedMovie={this.state.selectedMovie} />
+          </div>
         )}
       </div>
     );
