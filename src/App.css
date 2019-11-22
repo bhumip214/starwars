@@ -32,9 +32,11 @@ table {
   color: black;
 }
 
-th {
-  background-color: black;
+th,
+tfoot td {
+  cursor: pointer;
   border: 1px solid #ffe81f;
+  background-color: black;
   color: #ffe81f;
 }
 

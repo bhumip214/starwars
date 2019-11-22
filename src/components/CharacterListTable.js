@@ -172,6 +172,8 @@ class CharacterListTable extends React.Component {
                 <th onClick={this.handleSortByGender}>Gender</th>
                 <th onClick={this.handleSortByHeight}>Height</th>
               </tr>
+            </thead>
+            <tbody>
               {characters.map(character => {
                 return (
                   <tr key={character.url}>
@@ -181,13 +183,14 @@ class CharacterListTable extends React.Component {
                   </tr>
                 );
               })}
-
+            </tbody>
+            <tfoot>
               <tr>
-                <th>Total: {characters.length} </th>
-                <th></th>
-                <th>Sum: {this.getTotalHeight(characters)} </th>
+                <td>Total: {characters.length} </td>
+                <td></td>
+                <td>Sum: {this.getTotalHeight(characters)} </td>
               </tr>
-            </thead>
+            </tfoot>
           </table>
         </div>
       </div>
