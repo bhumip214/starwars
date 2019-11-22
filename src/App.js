@@ -1,8 +1,9 @@
 import React from "react";
 import "./App.css";
 import axios from "axios";
-import Dropdown from "./components/Dropdown";
+import MovieDropdown from "./components/MovieDropdown";
 import OpeningCrawl from "./components/OpeningCrawl";
+import CharacterListTable from "./components/CharacterListTable";
 
 class App extends React.Component {
   constructor(props) {
@@ -42,9 +43,16 @@ class App extends React.Component {
   };
 
   render() {
+    // console.log(this.state.movies);
+    if (this.state.isLoading) {
+      return <div>Loading Movies...</div>;
+    }
+    if (this.state.error) {
+      return <div>Unxpected error has occured while loading movie!</div>;
+    }
     return (
       <div className="App">
-        <Dropdown
+        <MovieDropdown
           movies={this.state.movies}
           onChange={this.handleSelectMovie}
         />
@@ -58,6 +66,7 @@ class App extends React.Component {
         ) : (
           <div className="movie">
             <OpeningCrawl selectedMovie={this.state.selectedMovie} />
+            <CharacterListTable selectedMovie={this.state.selectedMovie} />
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "proptypes";
 import { moviePropTypes } from "./MoviePropTypes";
 
-function Dropdown(props) {
+function MovieDropdown(props) {
   return (
     <div>
       <select autoFocus onChange={props.onChange}>
@@ -20,9 +20,10 @@ function Dropdown(props) {
   );
 }
 
-Dropdown.propTypes = {
+MovieDropdown.propTypes = {
   movies: PropTypes.arrayOf(PropTypes.shape(moviePropTypes).isRequired)
-    .isRequired
+    .isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
-export default Dropdown;
+export default MovieDropdown;
