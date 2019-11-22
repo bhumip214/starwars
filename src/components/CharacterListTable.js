@@ -148,7 +148,7 @@ class CharacterListTable extends React.Component {
             return character.gender === this.state.selectedGender;
           });
     if (this.state.isLoading) {
-      return <div>Loading...</div>;
+      return <div>Loading Characters...</div>;
     }
 
     if (this.state.error) {

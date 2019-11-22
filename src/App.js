@@ -43,12 +43,15 @@ class App extends React.Component {
   };
 
   render() {
-    // console.log(this.state.movies);
     if (this.state.isLoading) {
-      return <div>Loading Movies...</div>;
+      return <div className="App">Loading Movies...</div>;
     }
     if (this.state.error) {
-      return <div>Unxpected error has occured while loading movie!</div>;
+      return (
+        <div className="App">
+          Unxpected error has occured while loading movie!
+        </div>
+      );
     }
     return (
       <div className="App">
