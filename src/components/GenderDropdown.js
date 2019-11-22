@@ -1,6 +1,14 @@
 import React from "react";
 import PropTypes from "proptypes";
 
+export const genderAbbreviation = {
+  male: "M",
+  female: "F",
+  "n/a": "NA",
+  none: "-",
+  hermaphrodite: "H"
+};
+
 function GenderDropdown(props) {
   return (
     <div>
@@ -10,7 +18,7 @@ function GenderDropdown(props) {
         {props.genders.map(gender => {
           return (
             <option key={gender} value={gender}>
-              {gender.toUpperCase()}
+              {gender.toUpperCase()} ({genderAbbreviation[gender]})
             </option>
           );
         })}

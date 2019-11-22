@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import GenderDropdown from "./GenderDropdown";
+import GenderDropdown, { genderAbbreviation } from "./GenderDropdown";
 import PropTypes from "proptypes";
 import { moviePropTypes } from "./MoviePropTypes";
 
@@ -96,7 +96,7 @@ class CharacterListTable extends React.Component {
     const roundedFeet = Math.floor(feet);
     const inches = ((feet - roundedFeet) * 12).toFixed(2);
 
-    return `${sum}cm (${roundedFeet}ft / ${inches}in )`;
+    return `${sum}cm (${roundedFeet}ft / ${inches}in)`;
   };
 
   getSortedCharacters() {
@@ -176,7 +176,7 @@ class CharacterListTable extends React.Component {
                 return (
                   <tr key={character.url}>
                     <td>{character.name}</td>
-                    <td>{character.gender}</td>
+                    <td>{genderAbbreviation[character.gender]}</td>
                     <td>{character.height} </td>
                   </tr>
                 );
