@@ -164,31 +164,32 @@ class CharacterListTable extends React.Component {
           genders={this.getAllGenders()}
           onChange={this.handleSelectGender}
         />
+        <div className="character-list-table">
+          <table>
+            <thead>
+              <tr>
+                <th onClick={this.handleSortByName}>Name</th>
+                <th onClick={this.handleSortByGender}>Gender</th>
+                <th onClick={this.handleSortByHeight}>Height</th>
+              </tr>
+              {characters.map(character => {
+                return (
+                  <tr key={character.url}>
+                    <td>{character.name}</td>
+                    <td>{character.gender}</td>
+                    <td>{character.height} </td>
+                  </tr>
+                );
+              })}
 
-        <table className="character-list-table">
-          <thead>
-            <tr>
-              <th onClick={this.handleSortByName}>Name</th>
-              <th onClick={this.handleSortByGender}>Gender</th>
-              <th onClick={this.handleSortByHeight}>Height</th>
-            </tr>
-            {characters.map(character => {
-              return (
-                <tr key={character.url}>
-                  <td>{character.name}</td>
-                  <td>{character.gender}</td>
-                  <td>{character.height} </td>
-                </tr>
-              );
-            })}
-
-            <tr>
-              <th>Total: {characters.length} </th>
-              <th></th>
-              <th>Sum: {this.getTotalHeight(characters)} </th>
-            </tr>
-          </thead>
-        </table>
+              <tr>
+                <th>Total: {characters.length} </th>
+                <th></th>
+                <th>Sum: {this.getTotalHeight(characters)} </th>
+              </tr>
+            </thead>
+          </table>
+        </div>
       </div>
     );
   }

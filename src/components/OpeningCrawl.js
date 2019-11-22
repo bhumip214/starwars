@@ -7,7 +7,7 @@ function OpeningCrawl(props) {
     <marquee behavior="scroll" direction="up" scrolldelay="150" truespeed="20">
       <header className="movie-header">
         <img
-          width="300px"
+          width="200px"
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Star_Wars_Logo.svg/694px-Star_Wars_Logo.svg.png"
           alt="star-wars-logo"
         />
