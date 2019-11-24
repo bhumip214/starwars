@@ -89,8 +89,9 @@ class CharacterListTable extends React.Component {
 
   getTotalHeight = characters => {
     const sum = characters.reduce((acc, char) => {
-      acc = acc + Number(char.height);
-      return acc;
+      const height = Number(char.height);
+      // height can also be "unknown", perform NaN check
+      return isNaN(height) ? acc : acc + height;
     }, 0);
     const feet = sum * 0.0328084;
     const roundedFeet = Math.floor(feet);
