@@ -4,6 +4,8 @@ import GenderDropdown, { genderAbbreviation } from "./GenderDropdown";
 import PropTypes from "proptypes";
 import { moviePropTypes } from "./MoviePropTypes";
 
+const charactersCache = {};
+
 class CharacterListTable extends React.Component {
   constructor(props) {
     super(props);
@@ -31,14 +33,22 @@ class CharacterListTable extends React.Component {
 
   fetchCharacters = async () => {
     this.setState({ isLoading: true });
+
     try {
       const characters = await Promise.all(
-        this.props.selectedMovie.characters.map(character => {
-          return axios.get(`${character}`).then(res => {
-            return res.data;
-          });
+        this.props.selectedMovie.characters.map(characterUrl => {
+          // look up from cache
+          if (charactersCache[characterUrl]) {
+            return charactersCache[characterUrl];
+          } else {
+            return axios.get(characterUrl).then(res => {
+              charactersCache[characterUrl] = res.data;
+              return res.data;
+            });
+          }
         })
       );
+
       this.setState({ characters: characters, isLoading: false });
     } catch (error) {
       this.setState({ error: true });
