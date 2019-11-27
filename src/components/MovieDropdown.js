@@ -5,7 +5,7 @@ import { moviePropTypes } from "./MoviePropTypes";
 function MovieDropdown(props) {
   return (
     <div>
-      <select autoFocus onChange={props.onChange}>
+      <select autoFocus onChange={e => props.onChange(e.target.value)}>
         <option value="null">Select a Movie</option>
         <option disabled="disabled">--------------------------</option>
         {props.movies.map(movie => {

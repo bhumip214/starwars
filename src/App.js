@@ -5,76 +5,75 @@ import MovieDropdown from "./components/MovieDropdown";
 import OpeningCrawl from "./components/OpeningCrawl";
 import CharacterListTable from "./components/CharacterListTable";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      movies: [],
-      isLoading: false,
-      error: false,
-      selectedMovie: null
-    };
-  }
+function App() {
+  const [movies, setMovies] = React.useState({
+    isLoading: true,
+    error: false,
+    data: []
+  });
+  const [selectedMovieTitle, setSelectedMovieTitle] = React.useState(null);
 
-  componentDidMount() {
-    this.setState({ isLoading: true });
+  React.useEffect(() => {
     axios
       .get("https://swapi.co/api/films")
       .then(res => {
         const sortedMovies = res.data.results.sort((a, b) => {
           return new Date(a.release_date) - new Date(b.release_date);
         });
-        this.setState({ movies: sortedMovies, isLoading: false });
+
+        setMovies(state => {
+          return {
+            ...state,
+            isLoading: false,
+            data: sortedMovies
+          };
+        });
       })
       .catch(err => {
-        this.setState({ error: true });
+        setMovies(state => {
+          return {
+            ...state,
+            isLoading: false,
+            error: true
+          };
+        });
       });
+  }, []);
+
+  if (movies.isLoading) {
+    return <div className="App">Loading Movies...</div>;
   }
-
-  handleSelectMovie = e => {
-    if (e.target.value === "null") {
-      this.setState({ selectedMovie: null });
-    } else {
-      const movie = this.state.movies.find(movie => {
-        return movie.title === e.target.value;
-      });
-      this.setState({ selectedMovie: movie });
-    }
-  };
-
-  render() {
-    if (this.state.isLoading) {
-      return <div className="App">Loading Movies...</div>;
-    }
-    if (this.state.error) {
-      return (
-        <div className="App">
-          Unxpected error has occured while loading movie!
-        </div>
-      );
-    }
+  if (movies.error) {
     return (
       <div className="App">
-        <MovieDropdown
-          movies={this.state.movies}
-          onChange={this.handleSelectMovie}
-        />
-
-        {this.state.selectedMovie === null ? (
-          <img
-            className="large-logo"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Star_Wars_Logo.svg/694px-Star_Wars_Logo.svg.png"
-            alt="star-wars-logo"
-          />
-        ) : (
-          <div className="movie">
-            <OpeningCrawl selectedMovie={this.state.selectedMovie} />
-            <CharacterListTable selectedMovie={this.state.selectedMovie} />
-          </div>
-        )}
+        Unxpected error has occured while loading movies!
       </div>
     );
   }
-}
 
+  const selectedMovie = selectedMovieTitle
+    ? movies.data.find(movie => {
+        return movie.title === selectedMovieTitle;
+      })
+    : undefined;
+
+  return (
+    <div className="App">
+      <MovieDropdown movies={movies.data} onChange={setSelectedMovieTitle} />
+
+      {selectedMovie ? (
+        <div className="movie">
+          <OpeningCrawl selectedMovie={selectedMovie} />
+          <CharacterListTable selectedMovie={selectedMovie} />
+        </div>
+      ) : (
+        <img
+          className="large-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Star_Wars_Logo.svg/694px-Star_Wars_Logo.svg.png"
+          alt="star-wars-logo"
+        />
+      )}
+    </div>
+  );
+}
 export default App;
