@@ -133,13 +133,11 @@ class CharacterListTable extends React.Component {
   }
 
   getAllGenders = () => {
-    const genders = [];
-    this.state.characters.forEach(character => {
-      if (genders.indexOf(character.gender) === -1) {
-        genders.push(character.gender);
-      }
+    const genders = this.state.characters.map(character => {
+      return character.gender;
     });
-    return genders;
+
+    return [...new Set(genders)];
   };
 
   handleSelectGender = e => {
