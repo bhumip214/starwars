@@ -28,6 +28,7 @@ class CharacterListTable extends React.Component {
       this.props.selectedMovie.episode_id !== prevProps.selectedMovie.episode_id
     ) {
       this.fetchCharacters();
+      this.setState({ selectedGender: null });
     }
   }
 
