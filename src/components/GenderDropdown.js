@@ -12,7 +12,13 @@ export const genderAbbreviation = {
 function GenderDropdown(props) {
   return (
     <div>
-      <select value={props.selectedGender || "null"} onChange={props.onChange}>
+      <select
+        value={props.selectedGender || "null"}
+        onChange={e => {
+          const value = e.target.value;
+          props.onChange(value === "null" ? null : value);
+        }}
+      >
         <option value="null">All Genders</option>
         <option disabled="disabled">--------------------------</option>
         {props.genders.map(gender => {

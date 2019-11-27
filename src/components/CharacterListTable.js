@@ -6,206 +6,165 @@ import { moviePropTypes } from "./MoviePropTypes";
 
 const charactersCache = {};
 
-class CharacterListTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: false,
-      characters: [],
-      error: false,
-      sortBy: null,
-      sortOrder: null,
-      selectedGender: null
-    };
-  }
-
-  componentDidMount() {
-    this.fetchCharacters();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.selectedMovie.episode_id !== prevProps.selectedMovie.episode_id
-    ) {
-      this.fetchCharacters();
-      this.setState({ selectedGender: null });
-    }
-  }
-
-  fetchCharacters = async () => {
-    this.setState({ isLoading: true });
-
-    try {
-      const characters = await Promise.all(
-        this.props.selectedMovie.characters.map(characterUrl => {
-          // look up from cache
-          if (charactersCache[characterUrl]) {
-            return charactersCache[characterUrl];
-          } else {
-            return axios.get(characterUrl).then(res => {
-              charactersCache[characterUrl] = res.data;
-              return res.data;
-            });
-          }
-        })
-      );
-
-      this.setState({ characters: characters, isLoading: false });
-    } catch (error) {
-      this.setState({ error: true });
-    }
-  };
-
-  handleSortByName = () => {
-    if (this.state.sortBy === "name" && this.state.sortOrder === "asc") {
-      this.setState({
-        sortBy: "name",
-        sortOrder: "desc"
-      });
-    } else {
-      this.setState({
-        sortBy: "name",
-        sortOrder: "asc"
-      });
-    }
-  };
-
-  handleSortByGender = () => {
-    if (this.state.sortBy === "gender" && this.state.sortOrder === "asc") {
-      this.setState({
-        sortBy: "gender",
-        sortOrder: "desc"
-      });
-    } else {
-      this.setState({
-        sortBy: "gender",
-        sortOrder: "asc"
-      });
-    }
-  };
-
-  handleSortByHeight = () => {
-    if (this.state.sortBy === "height" && this.state.sortOrder === "asc") {
-      this.setState({
-        sortBy: "height",
-        sortOrder: "desc"
-      });
-    } else {
-      this.setState({
-        sortBy: "height",
-        sortOrder: "asc"
-      });
-    }
-  };
-
-  getTotalHeight = characters => {
-    const sum = characters.reduce((acc, char) => {
-      const height = Number(char.height);
-      // height can also be "unknown", perform NaN check
-      return isNaN(height) ? acc : acc + height;
-    }, 0);
-    const feet = sum * 0.0328084;
-    const roundedFeet = Math.floor(feet);
-    const inches = ((feet - roundedFeet) * 12).toFixed(2);
-
-    return `${sum}cm (${roundedFeet}ft / ${inches}in)`;
-  };
-
-  getSortedCharacters() {
-    let sortedCharacters = this.state.characters;
-
-    if (this.state.sortOrder !== null && this.state.sortBy !== null) {
-      const sortOrder = this.state.sortOrder;
-      const sortBy = this.state.sortBy;
-
-      sortedCharacters = [...this.state.characters].sort((a, b) => {
-        if (sortBy === "height") {
-          return Number(a.height) - Number(b.height);
-        } else {
-          return a[sortBy].localeCompare(b[sortBy]);
-        }
-      });
-
-      if (sortOrder === "desc") {
-        sortedCharacters.reverse();
+async function fetchCharacters(characterUrls) {
+  const characters = await Promise.all(
+    characterUrls.map(characterUrl => {
+      // look up from cache
+      if (charactersCache[characterUrl]) {
+        return charactersCache[characterUrl];
+      } else {
+        return axios.get(characterUrl).then(res => {
+          charactersCache[characterUrl] = res.data;
+          return res.data;
+        });
       }
-    }
-    return sortedCharacters;
+    })
+  );
+
+  return characters;
+}
+
+function getTotalHeight(characters) {
+  const sum = characters.reduce((acc, char) => {
+    const height = Number(char.height);
+    // height can also be "unknown", perform NaN check
+    return isNaN(height) ? acc : acc + height;
+  }, 0);
+  const feet = sum * 0.0328084;
+  const roundedFeet = Math.floor(feet);
+  const inches = ((feet - roundedFeet) * 12).toFixed(2);
+
+  return `${sum}cm (${roundedFeet}ft / ${inches}in)`;
+}
+
+function getAllGenders(characters) {
+  const genders = characters.map(character => {
+    return character.gender;
+  });
+
+  return [...new Set(genders)];
+}
+
+function getSortedCharacters(characters, sort) {
+  const sortOrder = sort.order;
+  const sortBy = sort.field;
+
+  if (sortOrder === null && sortBy === null) {
+    return characters;
   }
 
-  getAllGenders = () => {
-    const genders = this.state.characters.map(character => {
-      return character.gender;
+  const sortedCharacters = [...characters].sort((a, b) => {
+    if (sortBy === "height") {
+      return Number(a.height) - Number(b.height);
+    } else {
+      return a[sortBy].localeCompare(b[sortBy]);
+    }
+  });
+
+  if (sortOrder === "desc") {
+    sortedCharacters.reverse();
+  }
+
+  return sortedCharacters;
+}
+
+function CharacterListTable(props) {
+  const [characters, setCharacters] = React.useState({
+    isLoading: true,
+    error: false,
+    data: []
+  });
+  const [sort, setSort] = React.useState({ field: null, order: null });
+  const [selectedGender, setSelectedGender] = React.useState(null);
+
+  React.useEffect(() => {
+    setCharacters({
+      data: [],
+      isLoading: true,
+      error: false
     });
 
-    return [...new Set(genders)];
-  };
+    fetchCharacters(props.selectedMovie.characters)
+      .then(characters => {
+        setCharacters({
+          data: characters,
+          isLoading: false,
+          error: false
+        });
+      })
+      .catch(err => {
+        setCharacters({
+          data: [],
+          isLoading: false,
+          error: true
+        });
+      });
+  }, [props.selectedMovie.episode_id]);
 
-  handleSelectGender = e => {
-    if (e.target.value === "null") {
-      this.setState({ selectedGender: null });
+  function handleSortBy(field) {
+    if (sort.field === field && sort.order === "asc") {
+      setSort({ field, order: "desc" });
     } else {
-      this.setState({ selectedGender: e.target.value });
+      setSort({ field, order: "asc" });
     }
-  };
+  }
 
-  render() {
-    const sortedCharacters = this.getSortedCharacters();
-    const characters =
-      this.state.selectedGender === null
-        ? this.getSortedCharacters()
-        : sortedCharacters.filter(character => {
-            return character.gender === this.state.selectedGender;
-          });
-    if (this.state.isLoading) {
-      return <div>Loading Characters...</div>;
-    }
+  if (characters.isLoading) {
+    return <div>Loading Characters...</div>;
+  }
 
-    if (this.state.error) {
-      return (
-        <div>Unexpected error has occured while fetching the Characters!</div>
-      );
-    }
-
+  if (characters.error) {
     return (
-      <div>
-        <GenderDropdown
-          selectedGender={this.state.selectedGender}
-          genders={this.getAllGenders()}
-          onChange={this.handleSelectGender}
-        />
-        <div className="character-list-table">
-          <table>
-            <thead>
-              <tr>
-                <th onClick={this.handleSortByName}>Name</th>
-                <th onClick={this.handleSortByGender}>Gender</th>
-                <th onClick={this.handleSortByHeight}>Height</th>
-              </tr>
-            </thead>
-            <tbody>
-              {characters.map(character => {
-                return (
-                  <tr key={character.url}>
-                    <td>{character.name}</td>
-                    <td>{genderAbbreviation[character.gender]}</td>
-                    <td>{character.height} </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td>Total: {characters.length} </td>
-                <td></td>
-                <td>Sum: {this.getTotalHeight(characters)} </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+      <div>Unexpected error has occured while fetching the Characters!</div>
     );
   }
+
+  const sortedCharacters = getSortedCharacters(characters.data, sort);
+  const charactersToShow =
+    selectedGender === null
+      ? sortedCharacters
+      : sortedCharacters.filter(character => {
+          return character.gender === selectedGender;
+        });
+
+  return (
+    <div>
+      <GenderDropdown
+        selectedGender={selectedGender}
+        genders={getAllGenders(characters.data)}
+        onChange={setSelectedGender}
+      />
+      <div className="character-list-table">
+        <table>
+          <thead>
+            <tr>
+              <th onClick={() => handleSortBy("name")}>Name</th>
+              <th onClick={() => handleSortBy("gender")}>Gender</th>
+              <th onClick={() => handleSortBy("height")}>Height</th>
+            </tr>
+          </thead>
+          <tbody>
+            {charactersToShow.map(character => {
+              return (
+                <tr key={character.url}>
+                  <td>{character.name}</td>
+                  <td>{genderAbbreviation[character.gender]}</td>
+                  <td>{character.height} </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total: {charactersToShow.length} </td>
+              <td></td>
+              <td>Sum: {getTotalHeight(charactersToShow)} </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
 }
 
 CharacterListTable.propTypes = {
