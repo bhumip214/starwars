@@ -3,6 +3,7 @@ import axios from "axios";
 import GenderDropdown, { genderAbbreviation } from "./GenderDropdown";
 import PropTypes from "proptypes";
 import { moviePropTypes } from "./MoviePropTypes";
+import { Th } from "./Th";
 
 const charactersCache = {};
 
@@ -141,9 +142,20 @@ function CharacterListTable(props) {
         <table>
           <thead>
             <tr>
-              <th onClick={() => handleSortBy("name")}>Name</th>
-              <th onClick={() => handleSortBy("gender")}>Gender</th>
-              <th onClick={() => handleSortBy("height")}>Height</th>
+              <Th field="name" sort={sort} onClick={handleSortBy}>
+                Name
+              </Th>
+              <Th
+                field="gender"
+                className="gender"
+                sort={sort}
+                onClick={handleSortBy}
+              >
+                Gender
+              </Th>
+              <Th field="height" sort={sort} onClick={handleSortBy}>
+                Height
+              </Th>
             </tr>
           </thead>
           <tbody>

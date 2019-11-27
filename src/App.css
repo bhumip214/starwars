@@ -25,6 +25,7 @@ td {
   padding: 10px;
   border-collapse: collapse;
   font-weight: bold;
+  text-align: left;
 }
 table {
   width: 100%;
@@ -51,7 +52,7 @@ tfoot td {
   width: 100%;
 }
 .movie {
-  max-width: 960px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
@@ -65,4 +66,8 @@ tfoot td {
 .character-list-table {
   margin-top: 12px;
   border: 2px solid #ffe81f;
+}
+
+th.gender {
+  min-width: 110px;
 }
