@@ -78,8 +78,9 @@ function CharacterListTable(props) {
   const [selectedGender, setSelectedGender] = React.useState(null);
 
   React.useEffect(() => {
-    // reset gender when selected movie changes
+    // reset gender and sort when selected movie changes
     setSelectedGender(null);
+    setSort({ field: null, order: null });
 
     setCharacters({
       data: [],
