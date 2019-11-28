@@ -5,6 +5,7 @@ import PropTypes from "proptypes";
 import { moviePropTypes } from "./MoviePropTypes";
 import { Th } from "./Th";
 import { abbreviateGenders } from "../utils/abbreviateGenders";
+import { sortByNumber, sortByString } from "../utils/sort";
 
 const charactersCache = {};
 
@@ -55,13 +56,10 @@ function getSortedCharacters(characters, sort) {
     return characters;
   }
 
-  const sortedCharacters = [...characters].sort((a, b) => {
-    if (sortBy === "height") {
-      return Number(a.height) - Number(b.height);
-    } else {
-      return a[sortBy].localeCompare(b[sortBy]);
-    }
-  });
+  const sortedCharacters =
+    sortBy === "height"
+      ? sortByNumber(characters, sortBy)
+      : sortByString(characters, sortBy);
 
   if (sortOrder === "desc") {
     sortedCharacters.reverse();

@@ -4,6 +4,7 @@ import axios from "axios";
 import MovieDropdown from "./components/MovieDropdown";
 import OpeningCrawl from "./components/OpeningCrawl";
 import CharacterListTable from "./components/CharacterListTable";
+import { sortByDate } from "./utils/sort";
 
 function App() {
   const [movies, setMovies] = React.useState({
@@ -17,10 +18,7 @@ function App() {
     axios
       .get("https://swapi.co/api/films")
       .then(res => {
-        const sortedMovies = res.data.results.sort((a, b) => {
-          return new Date(a.release_date) - new Date(b.release_date);
-        });
-
+        const sortedMovies = sortByDate(res.data.results, "release_date");
         setMovies(state => {
           return {
             ...state,
