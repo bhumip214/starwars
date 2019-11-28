@@ -1,15 +1,9 @@
 import React from "react";
 import PropTypes from "proptypes";
-
-export const genderAbbreviation = {
-  male: "M",
-  female: "F",
-  "n/a": "NA",
-  none: "-",
-  hermaphrodite: "H"
-};
+import { abbreviateGenders } from "../utils/abbreviateGenders";
 
 function GenderDropdown(props) {
+  const genderAbbreviation = abbreviateGenders(props.genders);
   return (
     <div>
       <select

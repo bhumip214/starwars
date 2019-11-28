@@ -4,6 +4,7 @@ import GenderDropdown, { genderAbbreviation } from "./GenderDropdown";
 import PropTypes from "proptypes";
 import { moviePropTypes } from "./MoviePropTypes";
 import { Th } from "./Th";
+import { abbreviateGenders } from "../utils/abbreviateGenders";
 
 const charactersCache = {};
 
@@ -38,7 +39,7 @@ function getTotalHeight(characters) {
   return `${sum}cm (${roundedFeet}ft / ${inches}in)`;
 }
 
-function getAllGenders(characters) {
+function getUniqueGenders(characters) {
   const genders = characters.map(character => {
     return character.gender;
   });
@@ -131,11 +132,14 @@ function CharacterListTable(props) {
           return character.gender === selectedGender;
         });
 
+  const uniqueGenders = getUniqueGenders(characters.data);
+  const genderAbbreviation = abbreviateGenders(uniqueGenders);
+
   return (
     <div>
       <GenderDropdown
         selectedGender={selectedGender}
-        genders={getAllGenders(characters.data)}
+        genders={uniqueGenders}
         onChange={setSelectedGender}
       />
       <div className="character-list-table">
